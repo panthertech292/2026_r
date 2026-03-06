@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DefaultShooter;
+import frc.robot.commands.ShooterFeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -27,6 +29,7 @@ public class RobotContainer {
     //Subsystems
     private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
     private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+    private final FeederSubsystem m_FeederSubsystem = new FeederSubsystem();
     //Drive Conffig
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -79,16 +82,16 @@ public class RobotContainer {
         joystick.povRight().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotate(.05), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
 
         //Intake Controls
-        joystick.y().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.75), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
-        joystick.x().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setFeeder(.50), () -> m_IntakeSubsystem.setFeeder(0), m_IntakeSubsystem));
-        joystick.b().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setFeeder(-.20), () -> m_IntakeSubsystem.setFeeder(0), m_IntakeSubsystem));
-        joystick.a().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntakeFeeder(.50,.75), () -> m_IntakeSubsystem.setIntakeFeeder(0,0), m_IntakeSubsystem));
+        joystick.y().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.50), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
+        joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
+        joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
 
         joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
 
         //Shooter Controls
         joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        joystick.start().whileTrue(new ShooterFeed(m_ShooterSubsystem, m_FeederSubsystem, 5000, .50));
         //joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
@@ -99,7 +102,7 @@ public class RobotContainer {
         //joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
