@@ -79,9 +79,10 @@ public class RobotContainer {
         joystick.povRight().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotate(.05), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
 
         //Intake Controls
-        joystick.y().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.45), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
+        joystick.y().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.75), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
         joystick.x().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setFeeder(.50), () -> m_IntakeSubsystem.setFeeder(0), m_IntakeSubsystem));
         joystick.b().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setFeeder(-.20), () -> m_IntakeSubsystem.setFeeder(0), m_IntakeSubsystem));
+        joystick.a().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntakeFeeder(.50,.75), () -> m_IntakeSubsystem.setIntakeFeeder(0,0), m_IntakeSubsystem));
 
         joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));

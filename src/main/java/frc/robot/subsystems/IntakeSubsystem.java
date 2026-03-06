@@ -88,6 +88,10 @@ public class IntakeSubsystem extends SubsystemBase {
     BottomFeederMotor.set(speed);
     TopFeederMotor.set(speed);
   }
+  public void setIntakeFeeder(double speedFeed, double speedIntake){
+    setFeeder(speedFeed);
+    setIntake(speedIntake);
+  }
   /**
    * Set both arm motors.
    * 
