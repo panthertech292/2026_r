@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -22,6 +21,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class PhotonVision {
@@ -38,17 +38,17 @@ public class PhotonVision {
     private Matrix<N3, N1> curStdDevsRight;
     // The standard deviations of our vision estimated poses, which affect correction rate
     // (Fake values. Experiment and determine estimation noise on an actual robot.)
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8); //TODO: Find these
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1); //TODO: Find these
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(.7,.7,9999999); //TODO: Find these
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(.7,.7,9999999); //TODO: Find these
 
     public PhotonVision(){
         LeftCamera = new PhotonCamera("OV9281-LEFT-APRIL");
         RightCamera = new PhotonCamera("OV9281-RIGHT-APRIL");
         AMField = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-        LeftCameraPosition= new Translation3d(); //TODO: Update this
-        RightCameraPosition = new Translation3d(); //TODO: Update this
-        LeftCameraRotation = new Rotation3d(); //TODO: Update this
-        RightCameraRotation = new Rotation3d(); //TODO: Update this
+        LeftCameraPosition= new Translation3d(-0.25190958,0.2705481,0.20464018);
+        RightCameraPosition = new Translation3d(-0.25190958,-0.2705481,0.20464018);
+        LeftCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(0)); //TODO: FIGURE THIS TF OUTT
+        RightCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(180-30));
 
         LeftPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(LeftCameraPosition, LeftCameraRotation));
         RightPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(RightCameraPosition, RightCameraRotation));
@@ -56,22 +56,34 @@ public class PhotonVision {
     public Optional<EstimatedRobotPose> getEstimatedGlobalPoseLeftCamera(){
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : LeftCamera.getAllUnreadResults()) {
-            visionEst = LeftPoseEstimator.estimateCoprocMultiTagPose(result);
-            if (visionEst.isEmpty()) {
-                visionEst = LeftPoseEstimator.estimateLowestAmbiguityPose(result); //fallback if multi-tag gives nothing
+            if (result.hasTargets()){
+                if (result.getBestTarget().getPoseAmbiguity() < 0.20){
+                    visionEst = LeftPoseEstimator.estimateCoprocMultiTagPose(result);
+                    if (visionEst.isEmpty()) {
+                        visionEst = LeftPoseEstimator.estimateLowestAmbiguityPose(result); //fallback if multi-tag gives nothing
+                    }
+                    updateEstimationStdDevsLeft(visionEst, result.getTargets());
+                }else{
+                    //System.out.println("Left cam getting rid of result with ambig: " + result.getBestTarget().getPoseAmbiguity());
+                }
             }
-            updateEstimationStdDevsLeft(visionEst, result.getTargets());
         }
         return visionEst;
     }
     public Optional<EstimatedRobotPose> getEstimatedGlobalPoseRightCamera(){
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : RightCamera.getAllUnreadResults()) {
-            visionEst = RightPoseEstimator.estimateCoprocMultiTagPose(result);
-            if (visionEst.isEmpty()) {
-                visionEst = RightPoseEstimator.estimateLowestAmbiguityPose(result);
+            if (result.hasTargets()){
+                if (result.getBestTarget().getPoseAmbiguity() < 0.20){
+                    visionEst = RightPoseEstimator.estimateCoprocMultiTagPose(result);
+                    if (visionEst.isEmpty()) {
+                        visionEst = RightPoseEstimator.estimateLowestAmbiguityPose(result);
+                    }
+                    updateEstimationStdDevsRight(visionEst, result.getTargets());
+                }else{
+                    //System.out.println("Right cam getting rid of result with ambig: " + result.getBestTarget().getPoseAmbiguity());
+                }
             }
-            updateEstimationStdDevsRight(visionEst, result.getTargets());
         }
         return visionEst;
     }

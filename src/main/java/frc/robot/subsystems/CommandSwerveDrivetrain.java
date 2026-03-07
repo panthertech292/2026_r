@@ -240,6 +240,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void updatePhotonVision(){
         var visionEstLeft = PhotonVis.getEstimatedGlobalPoseLeftCamera();
         var visionEstRight = PhotonVis.getEstimatedGlobalPoseRightCamera();
+        
         visionEstLeft.ifPresent(est -> {addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, PhotonVis.getEstimationStdDevsLeft());});
         visionEstLeft.ifPresent(est -> {leftCameraField.setRobotPose(est.estimatedPose.toPose2d());}); //This is for display,
         visionEstRight.ifPresent(est -> {addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, PhotonVis.getEstimationStdDevsRight());});
