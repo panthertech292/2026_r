@@ -82,16 +82,16 @@ public class RobotContainer {
         joystick.povRight().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotate(.05), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
 
         //Intake Controls
-        joystick.y().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.50), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
+        joystick.y().toggleOnTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.50), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
         joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
         joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
 
-        joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
-        joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
+        //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
+        //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
 
         //Shooter Controls
         joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
-        joystick.start().whileTrue(new ShooterFeed(m_ShooterSubsystem, m_FeederSubsystem, 5000, .50));
+        joystick.a().toggleOnTrue(new ShooterFeed(m_ShooterSubsystem, m_FeederSubsystem, 5000, .50));
         //joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
