@@ -12,18 +12,21 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.PhotonVision;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -34,6 +37,11 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private final PhotonVision PhotonVis;
+    private Pose2d PhotonPoseLeft = new Pose2d();
+    private Pose2d PhotonPoseRight = new Pose2d();
+    private Field2d leftCameraField = new Field2d();
+    private Field2d rightCameraField = new Field2d();
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -130,6 +138,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        PhotonVis = new PhotonVision();
+        Config();
     }
 
     /**
@@ -154,6 +164,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        PhotonVis = new PhotonVision();
+        Config();
     }
 
     /**
@@ -186,6 +198,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        PhotonVis = new PhotonVision();
+        Config();
     }
 
     /**
@@ -219,9 +233,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
+    private void Config(){
+        SmartDashboard.putData("Left Cam Pose ", leftCameraField);
+        SmartDashboard.putData("Right Cam Pose ", rightCameraField);
+    }
+    private void updatePhotonVision(){
+        var visionEstLeft = PhotonVis.getEstimatedGlobalPoseLeftCamera();
+        var visionEstRight = PhotonVis.getEstimatedGlobalPoseRightCamera();
+        visionEstLeft.ifPresent(est -> {addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, PhotonVis.getEstimationStdDevsLeft());});
+        visionEstLeft.ifPresent(est -> {leftCameraField.setRobotPose(est.estimatedPose.toPose2d());}); //This is for display,
+        visionEstRight.ifPresent(est -> {addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, PhotonVis.getEstimationStdDevsRight());});
+        visionEstRight.ifPresent(est -> {rightCameraField.setRobotPose(est.estimatedPose.toPose2d());}); //This is for display,
+    }
 
     @Override
     public void periodic() {
+        updatePhotonVision();
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
