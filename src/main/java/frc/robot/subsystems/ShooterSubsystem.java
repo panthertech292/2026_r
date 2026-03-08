@@ -82,7 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
     RotateConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     RotateConfig.ExternalFeedback.ExternalFeedbackSensorSource = ExternalFeedbackSensorSourceValue.RemoteCANdiPWM1;
     RotateConfig.ExternalFeedback.FeedbackRemoteSensorID = ShooterConstants.kShooterCANdi;
-    //RotateConfig.ExternalFeedback.SensorToMechanismRatio = 10;
+    RotateConfig.ExternalFeedback.SensorToMechanismRatio = 10;
     //RotateConfig.ExternalFeedback.RotorToSensorRatio = mmaybe we should fuse? more work on formulas
     RotateConfig.MotionMagic.MotionMagicCruiseVelocity = 2;
     RotateConfig.MotionMagic.MotionMagicAcceleration = 4;
@@ -95,7 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
     Slot0ConfigRotate = new Slot0Configs();
     Slot0ConfigRotate.kS = 0.0; // Add 0.1 V output to overcome static friction
     Slot0ConfigRotate.kV = 0; // A velocity target of 1 rps results in 0.12 V output //Feedforward
-    Slot0ConfigRotate.kP = 10; // An error of 1 rps results in 0.11 V output
+    Slot0ConfigRotate.kP = 75; // An error of 1 rps results in 0.11 V output
     Slot0ConfigRotate.kI = 0.0; // no output for integrated error
     Slot0ConfigRotate.kD = 0; // no output for error derivative
 
@@ -124,9 +124,9 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
   public void setRotatePosition(double degrees){
-    double rawPoint = getShooterRawFromDegrees(degrees);
+    double rotations = (degrees - 180) / 360.0;
     if (degrees > ShooterConstants.kRotatateMin && degrees < ShooterConstants.kRotatateMax){
-      RotateMotor.setControl(RotateMotionMagic.withPosition(rawPoint));
+      RotateMotor.setControl(RotateMotionMagic.withPosition(rotations));
     }else{
       System.out.println("WARNING: Trying to set PID past turret safe limits!");
     }
@@ -174,9 +174,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public double getShooterDegrees(){
     return (getShooterRAWAngle() * 360/10) + 180;
-  }
-  public double getShooterRawFromDegrees(double degrees){
-    return (degrees - 180) / (360.0 / 10.0);
   }
 
   @Override

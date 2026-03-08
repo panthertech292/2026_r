@@ -30,6 +30,8 @@ public class Constants {
     public static class FieldConstants {
         public static class Red{
             public static final Translation2d kGoalPosition = new Translation2d(11.90, 4.02);
+            public static final Translation2d kRedPassTestSPot = new Translation2d(16.50,5.00); //this is mainly for passing, not accurate!
+            public static final Translation2d kRedPassTestSPot2 = new Translation2d(16.50,1); //this is mainly for passing, not accurate!
         }
     }
     public static class ShooterInterpolationConstants{

@@ -20,6 +20,7 @@ import frc.robot.commands.DefaultShooter;
 import frc.robot.commands.ShooterFeed;
 import frc.robot.commands.ShooterFeedAutoRPM;
 import frc.robot.commands.ShooterFeedCustomRPM;
+import frc.robot.commands.ShooterFullAuto;
 import frc.robot.commands.ShooterManualRotate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -75,11 +76,11 @@ public class RobotContainer {
             )
         );
         //Points robot at specified spot
-        joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        /*joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withTargetDirection(
                         Utils.getAngleBetweenPointsForShooter(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.Red.kGoalPosition)
-                    )));
+                    )));*/
 
 
         // Idle while the robot is disabled. This ensures the configured
@@ -114,8 +115,11 @@ public class RobotContainer {
 
         //Shooter Controls
         joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
-        joystick.a().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
-        joystick.b().toggleOnTrue(new ShooterFeedAutoRPM(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getDistanceFromTarget(FieldConstants.Red.kGoalPosition),.50));
+        //joystick.a().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
+        //joystick.b().toggleOnTrue(new ShooterFeedAutoRPM(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getDistanceFromTarget(FieldConstants.Red.kGoalPosition),.50));
+        joystick.a().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kGoalPosition, .50));
+        joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kRedPassTestSPot, .50));
+        joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kRedPassTestSPot2, .50));
         //joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
