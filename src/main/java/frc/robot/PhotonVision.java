@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class PhotonVision {
@@ -30,10 +31,10 @@ public class PhotonVision {
     PhotonPoseEstimator LeftPoseEstimator;
     PhotonPoseEstimator RightPoseEstimator;
     AprilTagFieldLayout AMField;
-    Translation3d LeftCameraPosition;
-    Translation3d RightCameraPosition;
-    Rotation3d LeftCameraRotation;
-    Rotation3d RightCameraRotation;
+    private final Translation3d LeftCameraPosition;
+    private final Translation3d RightCameraPosition;
+    private final Rotation3d LeftCameraRotation;
+    private final Rotation3d RightCameraRotation;
     private Matrix<N3, N1> curStdDevsLeft;
     private Matrix<N3, N1> curStdDevsRight;
     // The standard deviations of our vision estimated poses, which affect correction rate
@@ -47,8 +48,8 @@ public class PhotonVision {
         AMField = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
         LeftCameraPosition= new Translation3d(-0.25190958,0.2705481,0.20464018);
         RightCameraPosition = new Translation3d(-0.25190958,-0.2705481,0.20464018);
-        LeftCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(0)); //TODO: FIGURE THIS TF OUTT
-        RightCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(180-30));
+        LeftCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(-150)); //TODO: FIGURE THIS TF OUTT
+        RightCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(150));
 
         LeftPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(LeftCameraPosition, LeftCameraRotation));
         RightPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(RightCameraPosition, RightCameraRotation));
@@ -63,6 +64,7 @@ public class PhotonVision {
                         visionEst = LeftPoseEstimator.estimateLowestAmbiguityPose(result); //fallback if multi-tag gives nothing
                     }
                     updateEstimationStdDevsLeft(visionEst, result.getTargets());
+                    SmartDashboard.putNumber("Left Heading: ", visionEst.get().estimatedPose.toPose2d().getRotation().getDegrees());
                 }else{
                     //System.out.println("Left cam getting rid of result with ambig: " + result.getBestTarget().getPoseAmbiguity());
                 }
@@ -80,6 +82,7 @@ public class PhotonVision {
                         visionEst = RightPoseEstimator.estimateLowestAmbiguityPose(result);
                     }
                     updateEstimationStdDevsRight(visionEst, result.getTargets());
+                    SmartDashboard.putNumber("Right Heading: ", visionEst.get().estimatedPose.toPose2d().getRotation().getDegrees());
                 }else{
                     //System.out.println("Right cam getting rid of result with ambig: " + result.getBestTarget().getPoseAmbiguity());
                 }
