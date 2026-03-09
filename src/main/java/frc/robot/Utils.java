@@ -14,4 +14,9 @@ public class Utils {
         //return new Rotation2d(Math.atan2(robot.getY()-target.getY(), robot.getX()-target.getX()));
         return new Rotation2d(Math.atan2(target.getY()-robot.getY(), target.getX()-robot.getX()));
     }
+    public static Translation2d getRedTranslatonFromBlue(Translation2d blueTranslation){
+        double RedX = 16.52 - blueTranslation.getX();
+        double RedY = 8.04 - blueTranslation.getY();
+        return new Translation2d(RedX, RedY);
+    }
 }

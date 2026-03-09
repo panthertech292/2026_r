@@ -8,8 +8,12 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -17,11 +21,13 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.DefaultShooter;
+import frc.robot.commands.IntakeRun;
 import frc.robot.commands.ShooterFeed;
 import frc.robot.commands.ShooterFeedAutoRPM;
 import frc.robot.commands.ShooterFeedCustomRPM;
 import frc.robot.commands.ShooterFullAuto;
 import frc.robot.commands.ShooterManualRotate;
+import frc.robot.commands.ShooterRevAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FeederSubsystem;
@@ -32,9 +38,14 @@ public class RobotContainer {
     //Joysticks
     private final CommandXboxController joystick = new CommandXboxController(0); //TODO: Add constants, rename
     //Subsystems
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
     private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
     private final FeederSubsystem m_FeederSubsystem = new FeederSubsystem();
+    //Reused Commands
+    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .50);
+    private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
+    private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.50);
     //Drive Conffig
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -57,10 +68,21 @@ public class RobotContainer {
 
     
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    
+
+    private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
         configureBindings();
+        registerCommands();
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto", autoChooser);
+    }
+
+    public void registerCommands(){
+        NamedCommands.registerCommand("ShooterAutoHub", m_ShooterAutoHub);
+        NamedCommands.registerCommand("IntakeRun", m_IntakeRun);
+        NamedCommands.registerCommand("ShooterRevHub", m_ShooterRevHub);
     }
 
     private void configureBindings() {
@@ -101,25 +123,25 @@ public class RobotContainer {
         joystick.povRight().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, -0.05));
 
         //Intake Controls
-        joystick.y().toggleOnTrue(Commands.startEnd(() -> m_IntakeSubsystem.setIntake(.50), () -> m_IntakeSubsystem.setIntake(0), m_IntakeSubsystem));
+        joystick.y().toggleOnTrue(m_IntakeRun);
         //joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
         //joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
 
         //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //below are for debug
-        //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(-200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
-        //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
-        joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
-        joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
+        joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(-200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
+        joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
+        //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
+        //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
 
         //Shooter Controls
         joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
-        //joystick.a().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
+        joystick.start().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
         //joystick.b().toggleOnTrue(new ShooterFeedAutoRPM(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getDistanceFromTarget(FieldConstants.Red.kGoalPosition),.50));
-        joystick.a().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kGoalPosition, .50));
-        joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kRedPassTestSPot, .50));
-        joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.Red.kRedPassTestSPot2, .50));
+        joystick.a().toggleOnTrue(m_ShooterAutoHub);
+        joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .50));
+        joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .50));
         //joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
@@ -136,7 +158,10 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        System.out.println("AUTO RUNNING: " + autoChooser.getSelected().getName());
+        return autoChooser.getSelected();
         // Simple drive forward auton
+        /*
         final var idle = new SwerveRequest.Idle();
         return Commands.sequence(
             // Reset our field centric heading to match the robot
@@ -151,6 +176,6 @@ public class RobotContainer {
             .withTimeout(5.0),
             // Finally idle for the rest of auton
             drivetrain.applyRequest(() -> idle)
-        );
+        ); */
     }
 }

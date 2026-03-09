@@ -28,16 +28,18 @@ public class Constants {
         public static final double kRotatateMax = 270;
     }
     public static class FieldConstants {
-        public static class Red{
-            public static final Translation2d kGoalPosition = new Translation2d(11.90, 4.02);
-            public static final Translation2d kRedPassTestSPot = new Translation2d(16.50,5.00); //this is mainly for passing, not accurate!
-            public static final Translation2d kRedPassTestSPot2 = new Translation2d(16.50,1); //this is mainly for passing, not accurate!
-        }
+        //These are all for blue side. We use a Util function to convert to red
+        public static final Translation2d kHubPosition = new Translation2d(4.61, 4.02);
+        public static final Translation2d kPassTestSpotLeft = new Translation2d(.02,7); 
+        public static final Translation2d kPassTestSpotRight = new Translation2d(0.02,1);
+
     }
     public static class ShooterInterpolationConstants{
         public static final InterpolatingDoubleTreeMap rpmMAP = new InterpolatingDoubleTreeMap();
         static{ //KEY: DISTANCE METERS,  VALUE: SHOOTER RPM
+            rpmMAP.put(5.10, 5400.0);
             rpmMAP.put(4.94, 4800.0);
+            rpmMAP.put(4.4, 4500.0);
             rpmMAP.put(3.9, 4200.0);
             rpmMAP.put(2.9, 3500.0);
             rpmMAP.put(2.41, 3200.0);
