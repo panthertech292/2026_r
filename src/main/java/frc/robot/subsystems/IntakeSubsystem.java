@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     TalonFXSConfiguration BottomIntakeConfig = new TalonFXSConfiguration();
     BottomIntakeConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     BottomIntakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    BottomIntakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    //BottomIntakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     BottomIntakeMotor.getConfigurator().apply(BottomIntakeConfig);
 
     //Setup Top Intake Motor
@@ -37,6 +37,7 @@ public class IntakeSubsystem extends SubsystemBase {
     TalonFXSConfiguration TopIntakeConfig = new TalonFXSConfiguration();
     TopIntakeConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     TopIntakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    TopIntakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     TopIntakeMotor.getConfigurator().apply(TopIntakeConfig);
 
     //Setup Right Arm Motor
