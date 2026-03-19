@@ -29,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     TalonFXSConfiguration BottomIntakeConfig = new TalonFXSConfiguration();
     BottomIntakeConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     BottomIntakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    //BottomIntakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    BottomIntakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     BottomIntakeMotor.getConfigurator().apply(BottomIntakeConfig);
 
     //Setup Top Intake Motor

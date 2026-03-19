@@ -37,13 +37,15 @@ public class Constants {
     public static class ShooterInterpolationConstants{
         public static final InterpolatingDoubleTreeMap rpmMAP = new InterpolatingDoubleTreeMap();
         static{ //KEY: DISTANCE METERS,  VALUE: SHOOTER RPM
-            rpmMAP.put(5.10, 5400.0);
-            rpmMAP.put(4.94, 4800.0);
-            rpmMAP.put(4.4, 4500.0);
-            rpmMAP.put(3.9, 4200.0);
-            rpmMAP.put(2.9, 3500.0);
-            rpmMAP.put(2.41, 3200.0);
+            //rpmMAP.put(6.00, 7000.0);
+            rpmMAP.put(5.10, 5600.0);
+            rpmMAP.put(4.94, 5000.0);
+            rpmMAP.put(4.4, 4700.0);
+            rpmMAP.put(3.9, 4400.0);
+            rpmMAP.put(2.9, 3700.0);
+            rpmMAP.put(2.41, 3400.0);
             rpmMAP.put(2.08, 3200.0);
+            
         }
     }
 }

@@ -80,12 +80,12 @@ public class ShooterFullAuto extends Command {
 
     //turretAngle = Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(), target).getDegrees() - robot.get().getRotation().getDegrees();
     distance = robot.get().getTranslation().getDistance(target);
-    System.out.println("Distance: " + distance);
+    //System.out.println("Distance: " + distance);
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     //System.out.println("Distance: " + distance + "   Target RPM: " + targetRPM);
     ShooterSub.setShooterRPM(targetRPM);
     ShooterSub.setRotatePosition(turretAngle);
-    System.out.println("Wanting to set turret to degree of: " + turretAngle);
+    //System.out.println("Wanting to set turret to degree of: " + turretAngle);
     if(ShooterSub.isShooterAtRPM(targetRPM)){
       if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
         FeederSub.setFeeder(feedSpeed);
