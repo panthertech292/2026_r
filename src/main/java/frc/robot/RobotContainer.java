@@ -29,6 +29,7 @@ import frc.robot.commands.ShooterFullAuto;
 import frc.robot.commands.ShooterManualRotate;
 import frc.robot.commands.ShooterRevAuto;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AgitatorSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -36,18 +37,20 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
     //Joysticks
-    private final CommandXboxController joystick = new CommandXboxController(0); //TODO: Add constants, rename
+    private final CommandXboxController driver_joystick = new CommandXboxController(0);
+    private final CommandXboxController operator_joystick = new CommandXboxController(1);
     //Subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
     private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
     private final FeederSubsystem m_FeederSubsystem = new FeederSubsystem();
+    private final AgitatorSubsystem m_AgitatorSubsystem = new AgitatorSubsystem();
     //Reused Commands
     private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .6);
     private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
     private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.50);
     //Drive Conffig
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -86,20 +89,20 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        m_ShooterSubsystem.setDefaultCommand(new DefaultShooter(m_ShooterSubsystem, () -> joystick.getRightTriggerAxis()));
+        m_ShooterSubsystem.setDefaultCommand(new DefaultShooter(m_ShooterSubsystem, () -> driver_joystick.getRightTriggerAxis()));
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driver_joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
         //Points robot at specified spot
-        /*joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        /*driver_joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withTargetDirection(
                         Utils.getAngleBetweenPointsForShooter(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.Red.kGoalPosition)
                     )));*/
@@ -112,48 +115,50 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        /*joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        /*driver_joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver_joystick.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driver_joystick.getLeftY(), -driver_joystick.getLeftX()))
         ));*/
         //Turret Controls
-        joystick.povUp().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setHood(.05), () -> m_ShooterSubsystem.setHood(0), m_ShooterSubsystem));
-        joystick.povDown().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setHood(-.05), () -> m_ShooterSubsystem.setHood(0), m_ShooterSubsystem));
-        joystick.povLeft().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, 0.05));
-        joystick.povRight().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, -0.05));
+        driver_joystick.povUp().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setHood(.05), () -> m_ShooterSubsystem.setHood(0), m_ShooterSubsystem));
+        driver_joystick.povDown().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setHood(-.05), () -> m_ShooterSubsystem.setHood(0), m_ShooterSubsystem));
+        driver_joystick.povLeft().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, 0.05));
+        driver_joystick.povRight().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, -0.05));
 
         //Intake Controls
-        joystick.y().toggleOnTrue(m_IntakeRun);
-        //joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
-        //joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
+        operator_joystick.y().toggleOnTrue(m_IntakeRun);
+        //driver_joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
+        //driver_joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
 
-        //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
-        //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
+        //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(.10), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
+        //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //below are for debug
-        joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(-200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
-        joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
-        //joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
-        //joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
+        driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.30), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
+        //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
+        //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
 
         //Shooter Controls
-        joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
-        joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
-        joystick.start().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
+        driver_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        driver_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
+        driver_joystick.start().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
         //joystick.b().toggleOnTrue(new ShooterFeedAutoRPM(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getDistanceFromTarget(FieldConstants.Red.kGoalPosition),.50));
-        joystick.a().toggleOnTrue(m_ShooterAutoHub);
-        joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .50));
-        joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .50));
-        //joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
+        operator_joystick.a().toggleOnTrue(m_ShooterAutoHub);
+        operator_joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .50));
+        operator_joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .50));
+        //driver_joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(driver_joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        //joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        //joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        //joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        //joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        //driver_joystick.back().and(driver_joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        //driver_joystick.back().and(driver_joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        //driver_joystick.start().and(driver_joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        //driver_joystick.start().and(driver_joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driver_joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

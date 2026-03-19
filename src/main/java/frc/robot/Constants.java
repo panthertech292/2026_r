@@ -15,6 +15,10 @@ public class Constants {
         public static final int kBottomFeederMotor = 24;
         public static final int kTopFeederMotor = 25;
     }
+    public static class AgitatorConstants {
+        public static final int kLeftAgitatorMotor = 40;
+        public static final int kRightAgitatorMotor = 41;
+    }
     public static class ShooterConstants {
         public static final int kRightShooterMotor = 30;
         public static final int kLeftShooterMotor = 31;
