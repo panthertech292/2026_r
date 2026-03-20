@@ -134,7 +134,7 @@ public class RobotContainer {
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //below are for debug
         //operator_joystick.leftBumper().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
-        operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem)); //Check to be sure this works when the shooter is active. Todo, change it so this is left trigger with the feeder.
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
