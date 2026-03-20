@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "WinchOut"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
@@ -12,6 +18,12 @@
                 "type": "named",
                 "data": {
                   "name": "IntakeRun"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AgitatorForward"
                 }
               },
               {

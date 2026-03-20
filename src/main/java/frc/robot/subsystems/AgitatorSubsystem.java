@@ -28,7 +28,7 @@ public class AgitatorSubsystem extends SubsystemBase {
     RightAgitatorMotor = new TalonFX(AgitatorConstants.kRightAgitatorMotor);
     TalonFXConfiguration RightAgitatorMotorConfig = new TalonFXConfiguration();
     RightAgitatorMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    RightAgitatorMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    RightAgitatorMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     RightAgitatorMotor.getConfigurator().apply(RightAgitatorMotorConfig);
   }
 

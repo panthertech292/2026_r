@@ -34,6 +34,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.WinchSubsystem;
 
 public class RobotContainer {
     //Joysticks
@@ -45,6 +46,7 @@ public class RobotContainer {
     private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
     private final FeederSubsystem m_FeederSubsystem = new FeederSubsystem();
     private final AgitatorSubsystem m_AgitatorSubsystem = new AgitatorSubsystem();
+    private final WinchSubsystem m_WinchSubsystem = new WinchSubsystem();
     //Reused Commands
     private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .6);
     private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
@@ -86,6 +88,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShooterAutoHub", m_ShooterAutoHub);
         NamedCommands.registerCommand("IntakeRun", m_IntakeRun);
         NamedCommands.registerCommand("ShooterRevHub", m_ShooterRevHub);
+        NamedCommands.registerCommand("AgitatorForward", Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        NamedCommands.registerCommand("WinchOut", Commands.startEnd(() -> m_WinchSubsystem.setWinch(-0.5), () -> m_WinchSubsystem.setWinch(0), m_WinchSubsystem).withTimeout(1));
     }
 
     private void configureBindings() {
@@ -134,7 +138,7 @@ public class RobotContainer {
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //below are for debug
         //operator_joystick.leftBumper().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
-        operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem)); //Check to be sure this works when the shooter is active. Todo, change it so this is left trigger with the feeder.
+        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem)); //Check to be sure this works when the shooter is active. Todo, change it so this is left trigger with the feeder.
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
@@ -153,6 +157,8 @@ public class RobotContainer {
         operator_joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .75));
         operator_joystick.b().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //driver_joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(driver_joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        operator_joystick.start().whileTrue(Commands.startEnd(() -> m_WinchSubsystem.setWinch(0.3), () -> m_WinchSubsystem.setWinch(0), m_WinchSubsystem));
+        operator_joystick.back().whileTrue(Commands.startEnd(() -> m_WinchSubsystem.setWinch(-0.3), () -> m_WinchSubsystem.setWinch(0), m_WinchSubsystem));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

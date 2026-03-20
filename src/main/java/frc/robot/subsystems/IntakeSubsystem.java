@@ -19,8 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private final TalonFXS BottomIntakeMotor;
   private final TalonFXS TopIntakeMotor;
 
-  private final TalonFX RightArmMotor;
-  private final TalonFX LeftArmMotor;
+  
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -41,18 +40,13 @@ public class IntakeSubsystem extends SubsystemBase {
     TopIntakeMotor.getConfigurator().apply(TopIntakeConfig);
 
     //Setup Right Arm Motor
-    RightArmMotor = new TalonFX(IntakeConstants.kRightArmMotor);
-    TalonFXConfiguration RightArmConfig = new TalonFXConfiguration();
-    RightArmConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    //RightArmMotor = new TalonFX(IntakeConstants.kRightArmMotor);
+    //TalonFXConfiguration RightArmConfig = new TalonFXConfiguration();
+    //RightArmConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     //RightArmConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    RightArmMotor.getConfigurator().apply(RightArmConfig);
+    //RightArmMotor.getConfigurator().apply(RightArmConfig);
 
-    //Setup Left Arm Motor
-    LeftArmMotor = new TalonFX(IntakeConstants.kLeftArmMotor);
-    TalonFXConfiguration LeftArmConfig = new TalonFXConfiguration();
-    LeftArmConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    LeftArmConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    LeftArmMotor.getConfigurator().apply(LeftArmConfig);
+    
   }
   /**
    * Set both intake motors on the arm.
@@ -68,10 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * 
    * @param speed The power to set the motors to. Positive is arm up. Negative is arm down.
    */
-  public void setArm(double speed){
-    RightArmMotor.set(speed);
-    LeftArmMotor.set(speed);
-  }
+  
 
   @Override
   public void periodic() {

@@ -71,7 +71,7 @@ public class ShooterRevAuto extends Command {
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     ShooterSub.setShooterRPM(targetRPM);
     ShooterSub.setRotatePosition(turretAngle);
-    System.out.println("Wanting to set turret to degree of: " + turretAngle);
+    //System.out.println("Wanting to set turret to degree of: " + turretAngle);
   }
 
   // Called once the command ends or is interrupted.
