@@ -27,7 +27,7 @@ public class Constants {
         public static final int kHoodMotor = 33;
 
         public static final int kShooterCANdi = 34;
-        public static final double kRotateMotorOffset = 0.223;
+        public static final double kRotateMotorOffset = 0.300;
         public static final double kRotatateMin = 90;
         public static final double kRotatateMax = 270;
     }

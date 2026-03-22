@@ -51,6 +51,7 @@ public class ShooterFullAuto extends Command {
         target = Utils.getRedTranslatonFromBlue(target); //Converts blue -> red
       }
     }
+    System.out.println("Aiming for: X" + target.getX() + " Y: " + target.getY());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -84,14 +85,14 @@ public class ShooterFullAuto extends Command {
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     //System.out.println("Distance: " + distance + "   Target RPM: " + targetRPM);
     ShooterSub.setShooterRPM(targetRPM);
-    ShooterSub.setRotatePosition(turretAngle);
-    System.out.println("Wanting to set turret to degree of: " + turretAngle);
+    // removed for broken turret ShooterSub.setRotatePosition(turretAngle);
+    //System.out.println("Wanting to set turret to degree of: " + turretAngle);
     if(ShooterSub.isShooterAtRPM(targetRPM)){
-      if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
+      //if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
         FeederSub.setFeeder(feedSpeed);
-      }else{
-        FeederSub.setFeeder(0);
-      }
+      //}else{
+      //  FeederSub.setFeeder(0);
+      //}
         
     }else{
       FeederSub.setFeeder(0);

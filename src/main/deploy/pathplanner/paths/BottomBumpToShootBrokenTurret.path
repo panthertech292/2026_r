@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 8.49,
+        "x": 2.0,
         "y": 2.457
       },
       "prevControl": {
-        "x": 7.560400874867714,
+        "x": 1.0704008748677136,
         "y": 2.457
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BottomMid"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -142.0
   },
   "reversed": false,
-  "folder": "MidfieldBottom",
+  "folder": "BrokenTurret",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 45.0
+    "rotation": -45.0
   },
   "useDefaultConstraints": true
 }

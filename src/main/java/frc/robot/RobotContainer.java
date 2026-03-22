@@ -48,11 +48,11 @@ public class RobotContainer {
     private final AgitatorSubsystem m_AgitatorSubsystem = new AgitatorSubsystem();
     private final WinchSubsystem m_WinchSubsystem = new WinchSubsystem();
     //Reused Commands
-    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .6);
+    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .75);
     private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
-    private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.50);
+    private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.75);
     //Drive Conffig
-    private double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 0.75 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -130,7 +130,7 @@ public class RobotContainer {
         driver_joystick.povRight().whileTrue(new ShooterManualRotate(m_ShooterSubsystem, -0.05));
 
         //Intake Controls
-        operator_joystick.y().toggleOnTrue(m_IntakeRun);
+        operator_joystick.leftBumper().whileTrue(m_IntakeRun);
         //driver_joystick.x().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(.50), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
         //driver_joystick.b().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-.20), () -> m_FeederSubsystem.setFeeder(0), m_IntakeSubsystem));
 
@@ -138,7 +138,7 @@ public class RobotContainer {
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_IntakeSubsystem.setArm(-.05), () -> m_IntakeSubsystem.setArm(0), m_IntakeSubsystem));
         //below are for debug
         //operator_joystick.leftBumper().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
-        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem)); //Check to be sure this works when the shooter is active. Todo, change it so this is left trigger with the feeder.
+        operator_joystick.a().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.5), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem)); //Check to be sure this works when the shooter is active. Todo, change it so this is left trigger with the feeder.
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(200), () -> m_ShooterSubsystem.incrementDebugRPM(0), m_ShooterSubsystem));
         //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(100), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
         //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setRotatePosition(170), () -> m_ShooterSubsystem.setRotate(0), m_ShooterSubsystem));
@@ -148,14 +148,14 @@ public class RobotContainer {
         driver_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
         driver_joystick.start().toggleOnTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, .50));
         //joystick.b().toggleOnTrue(new ShooterFeedAutoRPM(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getDistanceFromTarget(FieldConstants.Red.kGoalPosition),.50));
-        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
-        operator_joystick.leftTrigger().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
-        operator_joystick.a().toggleOnTrue(m_ShooterAutoHub);
-        operator_joystick.a().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
-        operator_joystick.x().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .75));
-        operator_joystick.x().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
-        operator_joystick.b().toggleOnTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .75));
-        operator_joystick.b().toggleOnTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        operator_joystick.a().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(-0.30), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        operator_joystick.a().whileTrue(Commands.startEnd(() -> m_FeederSubsystem.setFeeder(-0.30), () -> m_FeederSubsystem.setFeeder(0), m_FeederSubsystem));
+        operator_joystick.rightBumper().whileTrue(m_ShooterAutoHub);
+        operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        operator_joystick.x().whileTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .75));
+        operator_joystick.x().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
+        operator_joystick.b().whileTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .75));
+        operator_joystick.b().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //driver_joystick.rightTrigger().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setShooter(driver_joystick.getRightTriggerAxis()), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
         operator_joystick.start().whileTrue(Commands.startEnd(() -> m_WinchSubsystem.setWinch(0.3), () -> m_WinchSubsystem.setWinch(0), m_WinchSubsystem));
         operator_joystick.back().whileTrue(Commands.startEnd(() -> m_WinchSubsystem.setWinch(-0.3), () -> m_WinchSubsystem.setWinch(0), m_WinchSubsystem));

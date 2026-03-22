@@ -5,7 +5,9 @@
   "pathFolders": [
     "Depot",
     "Human",
-    "MidfieldBottom"
+    "MidfieldBottom",
+    "MidfieldTop",
+    "BrokenTurret"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
