@@ -105,11 +105,23 @@ public class RobotContainer {
             )
         );
         //Points robot at specified spot
-        /*driver_joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        driver_joystick.a().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-driver_joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withTargetDirection(
-                        Utils.getAngleBetweenPointsForShooter(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.Red.kGoalPosition)
-                    )));*/
+                        Utils.getAngleBetweenPointsAllianceMATCH(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.kHubPosition)
+                    )));
+
+        driver_joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withTargetDirection(
+                        Utils.getAngleBetweenPointsAllianceMATCH(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.kPassTestSpotLeft)
+                    )));
+
+        driver_joystick.b().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withTargetDirection(
+                        Utils.getAngleBetweenPointsAllianceMATCH(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.kPassTestSpotRight)
+                    )));
 
 
         // Idle while the robot is disabled. This ensures the configured

@@ -7,11 +7,21 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /** Add your docs here. */
 public class Utils {
     public static Rotation2d getAngleBetweenPointsForShooter(Translation2d robot, Translation2d target){
         //return new Rotation2d(Math.atan2(robot.getY()-target.getY(), robot.getX()-target.getX()));
+        return new Rotation2d(Math.atan2(target.getY()-robot.getY(), target.getX()-robot.getX()));
+    }
+    public static Rotation2d getAngleBetweenPointsAllianceMATCH(Translation2d robot, Translation2d target){
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) { //Convert input to red if needed
+            if (alliance.get() == DriverStation.Alliance.Red){
+                target = Utils.getRedTranslatonFromBlue(target); //Converts blue -> red
+            }
+        }
         return new Rotation2d(Math.atan2(target.getY()-robot.getY(), target.getX()-robot.getX()));
     }
     public static Translation2d getRedTranslatonFromBlue(Translation2d blueTranslation){
