@@ -13,23 +13,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AgitatorConstants;
 
 public class AgitatorSubsystem extends SubsystemBase {
-  private final TalonFX LeftAgitatorMotor;
-  private final TalonFX RightAgitatorMotor;
+  private final TalonFX agitatorMotor;
   /** Creates a new AgitatorSubsystem. */
   public AgitatorSubsystem() {
     //Setup Left Agitator Motor
-    LeftAgitatorMotor = new TalonFX(AgitatorConstants.kLeftAgitatorMotor);
-    TalonFXConfiguration LeftAgitatorMotorConfig = new TalonFXConfiguration();
-    LeftAgitatorMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    LeftAgitatorMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    LeftAgitatorMotor.getConfigurator().apply(LeftAgitatorMotorConfig);
-
-    //Setup Right Agitator Motor
-    RightAgitatorMotor = new TalonFX(AgitatorConstants.kRightAgitatorMotor);
-    TalonFXConfiguration RightAgitatorMotorConfig = new TalonFXConfiguration();
-    RightAgitatorMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    RightAgitatorMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    RightAgitatorMotor.getConfigurator().apply(RightAgitatorMotorConfig);
+    agitatorMotor = new TalonFX(AgitatorConstants.kAgitatorMotor);
+    TalonFXConfiguration agitatorMotorConfig = new TalonFXConfiguration();
+    agitatorMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    agitatorMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    agitatorMotor.getConfigurator().apply(agitatorMotorConfig);
   }
 
   /**
@@ -38,8 +30,7 @@ public class AgitatorSubsystem extends SubsystemBase {
    * @param speed The power to set the motors to. Positive is intake. Negative is out.
    */
   public void setAgitator(double speed){
-    LeftAgitatorMotor.set(speed);
-    RightAgitatorMotor.set(speed);
+    agitatorMotor.set(speed);
   }
 
   @Override

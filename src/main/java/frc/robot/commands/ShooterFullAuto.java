@@ -14,8 +14,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Utils;
+import frc.robot.Constants.AgitatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterInterpolationConstants;
+import frc.robot.subsystems.AgitatorSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -23,6 +25,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ShooterFullAuto extends Command {
   private ShooterSubsystem ShooterSub;
   private FeederSubsystem FeederSub;
+  private AgitatorSubsystem AgitatorSub;
   private Supplier<Pose2d> robot;
   private Translation2d target;
   private double feedSpeed;
@@ -30,16 +33,17 @@ public class ShooterFullAuto extends Command {
   private double targetRPM;
   private double turretAngle;
   /** Creates a new ShooterFeed. */
-  public ShooterFullAuto(ShooterSubsystem Shooter_Subsystem, FeederSubsystem Feeder_Subsystem, Supplier<Pose2d> robot, Translation2d target, double feedSpeed) {
+  public ShooterFullAuto(ShooterSubsystem Shooter_Subsystem, FeederSubsystem Feeder_Subsystem, AgitatorSubsystem Agitator_Subsystem, Supplier<Pose2d> robot, Translation2d target, double feedSpeed) {
     ShooterSub = Shooter_Subsystem;
     FeederSub = Feeder_Subsystem;
+    AgitatorSub = Agitator_Subsystem;
     this.robot = robot;
     this.target = target;
     this.distance = 0;
     this.feedSpeed = feedSpeed;
     targetRPM = 0;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(ShooterSub, FeederSub);
+    addRequirements(ShooterSub, FeederSub, AgitatorSub);
   }
 
   // Called when the command is initially scheduled.
@@ -66,8 +70,7 @@ public class ShooterFullAuto extends Command {
         fieldAngle.minus(robot.get().getRotation());
 
     // convert to degrees and normalize
-    double turretAngle =
-        MathUtil.inputModulus(turretRotation.getDegrees(), -180, 180);
+    double turretAngle = MathUtil.inputModulus(turretRotation.getDegrees(), -180, 180);
 
     // convert to your turret range (90 → 270)
     if (turretAngle < 0) {
@@ -85,17 +88,20 @@ public class ShooterFullAuto extends Command {
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     //System.out.println("Distance: " + distance + "   Target RPM: " + targetRPM);
     ShooterSub.setShooterRPM(targetRPM);
-    // removed for broken turret ShooterSub.setRotatePosition(turretAngle);
+    ShooterSub.setRotatePosition(turretAngle);
     //System.out.println("Wanting to set turret to degree of: " + turretAngle);
     if(ShooterSub.isShooterAtRPM(targetRPM)){
-      //if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
+      if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
         FeederSub.setFeeder(feedSpeed);
-      //}else{
-      //  FeederSub.setFeeder(0);
-      //}
+        AgitatorSub.setAgitator(AgitatorConstants.kAgitatorMotor);
+      }else{
+        FeederSub.setFeeder(0);
+        AgitatorSub.setAgitator(0);
+      }
         
     }else{
       FeederSub.setFeeder(0);
+      AgitatorSub.setAgitator(0);
     }
   }
 
@@ -105,6 +111,7 @@ public class ShooterFullAuto extends Command {
     ShooterSub.setShooter(0);
     FeederSub.setFeeder(0);
     ShooterSub.setRotate(0);
+    AgitatorSub.setAgitator(0);
   }
 
   // Returns true when the command should end.

@@ -46,10 +46,10 @@ public class PhotonVision {
         LeftCamera = new PhotonCamera("OV9281-LEFT-APRIL");
         RightCamera = new PhotonCamera("OV9281-RIGHT-APRIL");
         AMField = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-        LeftCameraPosition= new Translation3d(-0.25190958,0.2705481,0.20464018);
-        RightCameraPosition = new Translation3d(-0.25190958,-0.2705481,0.20464018);
-        LeftCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(-150)); //TODO: FIGURE THIS TF OUTT
-        RightCameraRotation = new Rotation3d(0,Units.degreesToRadians(-25),Units.degreesToRadians(150));
+        LeftCameraPosition= new Translation3d(-0.2802,0.2302,0.506);
+        RightCameraPosition = new Translation3d(-0.2802,-0.2302,0.506);
+        LeftCameraRotation = new Rotation3d(0,Units.degreesToRadians(-10),Units.degreesToRadians(170));
+        RightCameraRotation = new Rotation3d(0,Units.degreesToRadians(-10),Units.degreesToRadians(-170));
 
         LeftPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(LeftCameraPosition, LeftCameraRotation));
         RightPoseEstimator = new PhotonPoseEstimator(AMField, new Transform3d(RightCameraPosition, RightCameraRotation));

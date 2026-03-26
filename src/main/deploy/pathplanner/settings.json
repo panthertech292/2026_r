@@ -3,11 +3,11 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "BrokenTurret",
     "Depot",
-    "Human",
     "MidfieldBottom",
     "MidfieldTop",
-    "BrokenTurret"
+    "DefenseTop"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,
