@@ -28,6 +28,7 @@ import frc.robot.commands.ShooterFeed;
 import frc.robot.commands.ShooterFeedAutoRPM;
 import frc.robot.commands.ShooterFeedCustomRPM;
 import frc.robot.commands.ShooterFullAuto;
+import frc.robot.commands.ShooterFullDistance;
 import frc.robot.commands.ShooterManualRotate;
 import frc.robot.commands.ShooterRevAuto;
 import frc.robot.generated.TunerConstants;
@@ -50,13 +51,14 @@ public class RobotContainer {
     private final AgitatorSubsystem m_AgitatorSubsystem = new AgitatorSubsystem();
     private final WinchSubsystem m_WinchSubsystem = new WinchSubsystem();
     //Reused Commands
-    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, 0.8);
+    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, 0.99);
     private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
-    private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.75);
+    private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.80);
     private final ArmUp m_ArmUp = new ArmUp(m_WinchSubsystem, .15);
     private final ArmDown m_ArmDown = new ArmDown(m_WinchSubsystem, .15);
     //Drive Conffig
-    private double MaxSpeed = 0.9 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = 0.75 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double FullMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -65,6 +67,9 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.FieldCentric fullDrive = new SwerveRequest.FieldCentric()
+            .withDeadband(FullMaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     //For aiming at a pont
     private final SwerveRequest.FieldCentricFacingAngle driveAngle = new SwerveRequest.FieldCentricFacingAngle()
@@ -92,7 +97,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        m_ShooterSubsystem.setDefaultCommand(new DefaultShooter(m_ShooterSubsystem, () -> driver_joystick.getRightTriggerAxis()));
+        //m_ShooterSubsystem.setDefaultCommand(new DefaultShooter(m_ShooterSubsystem, () -> driver_joystick.getRightTriggerAxis()));
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -110,6 +115,12 @@ public class RobotContainer {
                     .withTargetDirection(
                         Utils.getAngleBetweenPointsForShooter(drivetrain.getState().Pose.getTranslation(), Constants.FieldConstants.Red.kGoalPosition)
                     )));*/
+        //Max speed drive button
+        driver_joystick.rightTrigger().whileTrue(drivetrain.applyRequest(() ->
+                fullDrive.withVelocityX(-driver_joystick.getLeftY() * FullMaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * FullMaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driver_joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            ));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -137,6 +148,7 @@ public class RobotContainer {
         operator_joystick.a().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(-0.30), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //Shoot Balls
         operator_joystick.rightBumper().whileTrue(m_ShooterAutoHub);
+        operator_joystick.rightTrigger().whileTrue(new ShooterFullDistance(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, 0.99));
         //operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.75), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //Pass Balls Left
         operator_joystick.x().whileTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .75));

@@ -3,24 +3,24 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6378214285714296,
+        "x": 2.4946581196581197,
         "y": 5.921353276353277
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7591509334558277,
+        "x": 1.4946581196581197,
         "y": 5.921353276353277
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FrontDepot"
     },
     {
       "anchor": {
-        "x": 0.6341452991452996,
+        "x": 0.5437037037037036,
         "y": 5.921353276353277
       },
       "prevControl": {
-        "x": 1.6341452991452978,
+        "x": 1.5437037037037036,
         "y": 5.921353276353277
       },
       "nextControl": null,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7003597122302077,
+      "minWaypointRelativePos": 0.5911680911680911,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,

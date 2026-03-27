@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "TopBumpToFrontDepot"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -36,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TopBumpToDepot"
+                  "pathName": "FrontDepotToDepot"
                 }
               },
               {

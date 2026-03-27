@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Utils;
 import frc.robot.Constants.AgitatorConstants;
@@ -70,36 +71,22 @@ public class ShooterFullAuto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //System.out.println("SHOOTER FULL AUTO: Aiming for: X" + target.getX() + " Y: " + target.getY());
-    Translation2d turretPosition = robot.get().getTranslation().plus(offset.rotateBy(robot.get().getRotation()));
-    Rotation2d fieldAngle = Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(),target);
-    //System.out.println("Angle between robot and target: " + fieldAngle.getDegrees());
-
-    Rotation2d turretRotation = fieldAngle.minus(robot.get().getRotation());
-    //System.out.println("turret rotation: " + turretRotation.getDegrees());
+    Pose2d turretPose = robot.get().plus(ShooterConstants.TurretPositionOffset);
+    Rotation2d fieldAngle = Utils.getAngleBetweenPointsForShooter(turretPose.getTranslation(),target);
+    Rotation2d turretRotation = fieldAngle.minus(turretPose.getRotation());
+    
     // convert to degrees and normalize
     double turretAngle = MathUtil.inputModulus(turretRotation.getDegrees(), -180, 180);
-    //System.out.println("turret rotation normalized: " + turretAngle);
     // convert to your turret range (90 → 270)
     if (turretAngle < 0) {
         turretAngle += 360;
     }
-    //double turretAngle = MathUtil.inputModulus(turretRotation.getDegrees(), 0, 360); //new
-    /*turretAngle = MathUtil.inputModulus(Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(), target).getDegrees()
-        - robot.get().getRotation().getDegrees(),
-        -180,
-        180);*/
-    //System.out.println("turret rotation wrapped: " + turretAngle);
-
-    //turretAngle = Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(), target).getDegrees() - robot.get().getRotation().getDegrees();
    
-    distance = robot.get().getTranslation().getDistance(target);
-    System.out.println("SHOOTER FULL AUTO: Aiming for: X" + target.getX() + " Y: " + target.getY() + " Distance: " + distance);
+    distance = turretPose.getTranslation().getDistance(target);
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
-    //System.out.println("Distance: " + distance + "   Target RPM: " + targetRPM);
     ShooterSub.setShooterRPM(targetRPM);
-    ShooterSub.setRotatePosition(turretAngle+3);
-    //System.out.println("Wanting to set turret to degree of: " + turretAngle);
+    ShooterSub.setRotatePosition(turretAngle);
+    System.out.println("SHOOTER FULL AUTO: Aiming for: X" + target.getX() + " Y: " + target.getY() + " Distance: " + distance + " RPM:" + targetRPM);
     if(ShooterSub.isShooterAtRPM(targetRPM)){
       if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
         FeederSub.setFeeder(feedSpeed);

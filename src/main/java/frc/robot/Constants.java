@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
@@ -21,6 +23,7 @@ public class Constants {
         public static final double kSpeed = 1;
     }
     public static class ShooterConstants {
+        public static Transform2d TurretPositionOffset = new Transform2d(-0.178, 0.0, new Rotation2d());
         public static final int kRightShooterMotor = 30;
         public static final int kLeftShooterMotor = 31;
 
@@ -28,7 +31,7 @@ public class Constants {
         public static final int kHoodMotor = 33;
 
         public static final int kShooterCANdi = 34;
-        public static final double kRotateMotorOffset = 0.300;
+        public static final double kRotateMotorOffset = 0.408;
         public static final double kRotatateMin = 90;
         public static final double kRotatateMax = 270;
     }
@@ -47,8 +50,8 @@ public class Constants {
             rpmMAP.put(4.4, 4500.0);
             rpmMAP.put(3.9, 4200.0);
             rpmMAP.put(2.9, 3500.0);
-            rpmMAP.put(2.41, 3200.0);
-            rpmMAP.put(2.08, 3200.0);
+            rpmMAP.put(2.41, 3300.0);
+            rpmMAP.put(2.08, 3300.0);
         }
     }
 }
