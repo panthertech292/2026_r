@@ -3,76 +3,60 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.51904761904762,
-        "y": 5.6114523809523815
+        "x": 3.5024358974358965,
+        "y": 7.32965811965812
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.51904761904762,
-        "y": 5.6114523809523815
-      },
-      "isLocked": false,
-      "linkedName": "topBump"
-    },
-    {
-      "anchor": {
-        "x": 6.725940476190477,
-        "y": 5.039178571428572
-      },
-      "prevControl": {
-        "x": 6.175261904761904,
-        "y": 5.62225
-      },
-      "nextControl": {
-        "x": 7.061159476594476,
-        "y": 4.684240806294927
+        "x": 3.0373076923076927,
+        "y": 6.812849002849003
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8165,
-        "y": 5.730226190476191
+        "x": 2.068290598290598,
+        "y": 5.921353276353277
       },
       "prevControl": {
-        "x": 7.718243145287102,
-        "y": 5.500344502423557
+        "x": 3.3352647466328316,
+        "y": 5.921353276353277
       },
       "nextControl": {
-        "x": 7.9147568547128975,
-        "y": 5.9601078785288255
+        "x": 1.2280783320504036,
+        "y": 5.921353276353277
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8165,
-        "y": 4.0
+        "x": 0.6341452991452996,
+        "y": 5.921353276353277
       },
       "prevControl": {
-        "x": 7.794904761904762,
-        "y": 4.345523809523809
+        "x": 1.3659367890863372,
+        "y": 5.921353276353277
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TopMid"
+      "linkedName": "Depot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.9190551181102395,
-      "rotationDegrees": -90.0
+      "waypointRelativePos": 1.037185125949618,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.178776978417266,
-      "maxWaypointRelativePos": 3.0,
+      "minWaypointRelativePos": 1.6989553656220207,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.5,
+        "maxVelocity": 1.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -93,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "MidfieldTop",
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 131.60888235686818
+    "rotation": 138.0127875041833
   },
   "useDefaultConstraints": true
 }
