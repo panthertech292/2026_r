@@ -18,7 +18,7 @@ public class Constants {
     }
     public static class AgitatorConstants {
         public static final int kAgitatorMotor = 40;
-        public static final double kSpeed = 0.75;
+        public static final double kSpeed = 1;
     }
     public static class ShooterConstants {
         public static final int kRightShooterMotor = 30;

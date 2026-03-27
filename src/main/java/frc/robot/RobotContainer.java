@@ -50,7 +50,7 @@ public class RobotContainer {
     private final AgitatorSubsystem m_AgitatorSubsystem = new AgitatorSubsystem();
     private final WinchSubsystem m_WinchSubsystem = new WinchSubsystem();
     //Reused Commands
-    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, .75);
+    private final ShooterFullAuto m_ShooterAutoHub = new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, 0.8);
     private final ShooterRevAuto m_ShooterRevHub = new ShooterRevAuto(m_ShooterSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kHubPosition);
     private final IntakeRun m_IntakeRun = new IntakeRun(m_IntakeSubsystem, 0.75);
     private final ArmUp m_ArmUp = new ArmUp(m_WinchSubsystem, .15);

@@ -120,7 +120,7 @@ public class ShooterSubsystem extends SubsystemBase {
       RotateMotor.set(speed);
     }else{
       RotateMotor.set(0);
-      System.out.println("WARNING: Trying to rotate turret out of safe zone!");
+      //System.out.println("WARNING: Trying to rotate turret out of safe zone!");
     }
   }
   public void setRotatePosition(double degrees){
@@ -128,7 +128,7 @@ public class ShooterSubsystem extends SubsystemBase {
     if (degrees > ShooterConstants.kRotatateMin && degrees < ShooterConstants.kRotatateMax){
       RotateMotor.setControl(RotateMotionMagic.withPosition(rotations));
     }else{
-      System.out.println("WARNING: Trying to set PID past turret safe limits!");
+      System.out.println("WARNING: Trying to set PID past turret safe limits: " + degrees);
     }
     
   }

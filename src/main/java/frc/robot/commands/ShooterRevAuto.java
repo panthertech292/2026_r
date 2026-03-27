@@ -26,13 +26,15 @@ public class ShooterRevAuto extends Command {
   private Translation2d target;
   private double distance;
   private double targetRPM;
+  private final Translation2d statTarget; 
   //private double turretAngle;
 
   /** Creates a new ShooterFeed. */
-  public ShooterRevAuto(ShooterSubsystem Shooter_Subsystem, Supplier<Pose2d> robot, Translation2d target) {
+  public ShooterRevAuto(ShooterSubsystem Shooter_Subsystem, Supplier<Pose2d> robot, Translation2d targetARG) {
     ShooterSub = Shooter_Subsystem;
     this.robot = robot;
-    this.target = target;
+    this.target = targetARG;
+    this.statTarget = targetARG;
     this.distance = 0;
     //turretAngle = 0;
     targetRPM = 0;
@@ -46,7 +48,7 @@ public class ShooterRevAuto extends Command {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) { //Convert input to red if needed
       if (alliance.get() == DriverStation.Alliance.Red){
-        target = Utils.getRedTranslatonFromBlue(target); //Converts blue -> red
+        target = Utils.getRedTranslatonFromBlue(statTarget); //Converts blue -> red
       }
     }
   }
@@ -70,7 +72,7 @@ public class ShooterRevAuto extends Command {
     distance = robot.get().getTranslation().getDistance(target);
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     ShooterSub.setShooterRPM(targetRPM);
-    ShooterSub.setRotatePosition(turretAngle);
+    ShooterSub.setRotatePosition(turretAngle+3);
     //System.out.println("Wanting to set turret to degree of: " + turretAngle);
   }
 

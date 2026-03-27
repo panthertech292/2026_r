@@ -28,20 +28,24 @@ public class ShooterFullAuto extends Command {
   private AgitatorSubsystem AgitatorSub;
   private Supplier<Pose2d> robot;
   private Translation2d target;
+  private final Translation2d statTarget; 
   private double feedSpeed;
   private double distance;
   private double targetRPM;
   private double turretAngle;
+  private final Translation2d offset;
   /** Creates a new ShooterFeed. */
-  public ShooterFullAuto(ShooterSubsystem Shooter_Subsystem, FeederSubsystem Feeder_Subsystem, AgitatorSubsystem Agitator_Subsystem, Supplier<Pose2d> robot, Translation2d target, double feedSpeed) {
+  public ShooterFullAuto(ShooterSubsystem Shooter_Subsystem, FeederSubsystem Feeder_Subsystem, AgitatorSubsystem Agitator_Subsystem, Supplier<Pose2d> robot, Translation2d targetARG, double feedSpeed) {
     ShooterSub = Shooter_Subsystem;
     FeederSub = Feeder_Subsystem;
     AgitatorSub = Agitator_Subsystem;
     this.robot = robot;
-    this.target = target;
+    this.target = targetARG;
+    this.statTarget = targetARG;
     this.distance = 0;
     this.feedSpeed = feedSpeed;
     targetRPM = 0;
+    offset = new Translation2d(-0.1778, 0);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ShooterSub, FeederSub, AgitatorSub);
   }
@@ -52,48 +56,54 @@ public class ShooterFullAuto extends Command {
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) { //Convert input to red if needed
       if (alliance.get() == DriverStation.Alliance.Red){
-        target = Utils.getRedTranslatonFromBlue(target); //Converts blue -> red
+        System.out.println("SHOOTER FULL AUTO: We are red alliance!");
+        target = Utils.getRedTranslatonFromBlue(statTarget); //Converts blue -> red
+      }else{
+        System.out.println("SHOOTER FULL AUTO: We are blue alliance!");
       }
     }
-    System.out.println("Aiming for: X" + target.getX() + " Y: " + target.getY());
+    else{
+        System.out.println("SHOOTER FULL AUTO: NO ALLIANCE FOUND!");
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Rotation2d fieldAngle =
-    Utils.getAngleBetweenPointsForShooter(
-        robot.get().getTranslation(),
-        target);
+    //System.out.println("SHOOTER FULL AUTO: Aiming for: X" + target.getX() + " Y: " + target.getY());
+    Translation2d turretPosition = robot.get().getTranslation().plus(offset.rotateBy(robot.get().getRotation()));
+    Rotation2d fieldAngle = Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(),target);
+    //System.out.println("Angle between robot and target: " + fieldAngle.getDegrees());
 
-    Rotation2d turretRotation =
-        fieldAngle.minus(robot.get().getRotation());
-
+    Rotation2d turretRotation = fieldAngle.minus(robot.get().getRotation());
+    //System.out.println("turret rotation: " + turretRotation.getDegrees());
     // convert to degrees and normalize
     double turretAngle = MathUtil.inputModulus(turretRotation.getDegrees(), -180, 180);
-
+    //System.out.println("turret rotation normalized: " + turretAngle);
     // convert to your turret range (90 → 270)
     if (turretAngle < 0) {
         turretAngle += 360;
     }
+    //double turretAngle = MathUtil.inputModulus(turretRotation.getDegrees(), 0, 360); //new
     /*turretAngle = MathUtil.inputModulus(Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(), target).getDegrees()
         - robot.get().getRotation().getDegrees(),
         -180,
         180);*/
-
+    //System.out.println("turret rotation wrapped: " + turretAngle);
 
     //turretAngle = Utils.getAngleBetweenPointsForShooter(robot.get().getTranslation(), target).getDegrees() - robot.get().getRotation().getDegrees();
+   
     distance = robot.get().getTranslation().getDistance(target);
-    System.out.println("Distance: " + distance);
+    System.out.println("SHOOTER FULL AUTO: Aiming for: X" + target.getX() + " Y: " + target.getY() + " Distance: " + distance);
     targetRPM = ShooterInterpolationConstants.rpmMAP.get(distance);
     //System.out.println("Distance: " + distance + "   Target RPM: " + targetRPM);
     ShooterSub.setShooterRPM(targetRPM);
-    ShooterSub.setRotatePosition(turretAngle);
+    ShooterSub.setRotatePosition(turretAngle+3);
     //System.out.println("Wanting to set turret to degree of: " + turretAngle);
     if(ShooterSub.isShooterAtRPM(targetRPM)){
       if(turretAngle < ShooterConstants.kRotatateMax && turretAngle > ShooterConstants.kRotatateMin){
         FeederSub.setFeeder(feedSpeed);
-        AgitatorSub.setAgitator(AgitatorConstants.kAgitatorMotor);
+        AgitatorSub.setAgitator(AgitatorConstants.kSpeed);
       }else{
         FeederSub.setFeeder(0);
         AgitatorSub.setAgitator(0);
