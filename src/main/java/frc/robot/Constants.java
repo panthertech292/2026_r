@@ -49,9 +49,13 @@ public class Constants {
             rpmMAP.put(4.94, 4800.0);
             rpmMAP.put(4.4, 4500.0);
             rpmMAP.put(3.9, 4200.0);
-            rpmMAP.put(2.9, 3500.0);
-            rpmMAP.put(2.41, 3300.0);
-            rpmMAP.put(2.08, 3300.0);
+            //rpmMAP.put(2.9, 3500.0);
+            rpmMAP.put(2.91, 3700.0);
+            rpmMAP.put(2.41, 3200.0);
+            rpmMAP.put(2.08, 3200.0);
+            rpmMAP.put(1.95, 3100.0);
+            //rpmMAP.put(2.68, 3350.0);
+            //CANNOT MAKE SHOT AT 1.6M OR LESS
         }
     }
 }

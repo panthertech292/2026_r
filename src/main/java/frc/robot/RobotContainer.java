@@ -24,8 +24,6 @@ import frc.robot.commands.ArmDown;
 import frc.robot.commands.ArmUp;
 import frc.robot.commands.DefaultShooter;
 import frc.robot.commands.IntakeRun;
-import frc.robot.commands.ShooterFeed;
-import frc.robot.commands.ShooterFeedAutoRPM;
 import frc.robot.commands.ShooterFeedCustomRPM;
 import frc.robot.commands.ShooterFullAuto;
 import frc.robot.commands.ShooterFullDistance;
@@ -59,6 +57,7 @@ public class RobotContainer {
     //Drive Conffig
     private double MaxSpeed = 0.75 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double FullMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double SlowSpeed = 0.25 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -69,6 +68,10 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     private final SwerveRequest.FieldCentric fullDrive = new SwerveRequest.FieldCentric()
             .withDeadband(FullMaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+    private final SwerveRequest.FieldCentric slowDrive = new SwerveRequest.FieldCentric()
+            .withDeadband(SlowSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     //For aiming at a pont
@@ -108,6 +111,10 @@ public class RobotContainer {
                     .withRotationalRate(-driver_joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+        //dont delete stuff below, used to get ranges
+        //driver_joystick.leftBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(100), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        //driver_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.incrementDebugRPM(-100), () -> m_ShooterSubsystem.setShooter(0), m_ShooterSubsystem));
+        //driver_joystick.a().whileTrue(new ShooterFeedCustomRPM(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem, 0.99));
 
         //Points robot at specified spot
         /*driver_joystick.x().whileTrue(drivetrain.applyRequest(() -> driveAngle.withVelocityX(-driver_joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
@@ -119,6 +126,12 @@ public class RobotContainer {
         driver_joystick.rightTrigger().whileTrue(drivetrain.applyRequest(() ->
                 fullDrive.withVelocityX(-driver_joystick.getLeftY() * FullMaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(-driver_joystick.getLeftX() * FullMaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driver_joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            ));
+
+        driver_joystick.leftTrigger().whileTrue(drivetrain.applyRequest(() ->
+                slowDrive.withVelocityX(-driver_joystick.getLeftY() * SlowSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver_joystick.getLeftX() * SlowSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driver_joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
@@ -149,13 +162,10 @@ public class RobotContainer {
         //Shoot Balls
         operator_joystick.rightBumper().whileTrue(m_ShooterAutoHub);
         operator_joystick.rightTrigger().whileTrue(new ShooterFullDistance(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kHubPosition, 0.99));
-        //operator_joystick.rightBumper().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.75), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //Pass Balls Left
         operator_joystick.x().whileTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem, () -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotLeft, .75));
-        //operator_joystick.x().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //Pass Balls Right
         operator_joystick.b().whileTrue(new ShooterFullAuto(m_ShooterSubsystem, m_FeederSubsystem, m_AgitatorSubsystem,() -> drivetrain.getState().Pose, FieldConstants.kPassTestSpotRight, .75));
-        //operator_joystick.b().whileTrue(Commands.startEnd(() -> m_AgitatorSubsystem.setAgitator(0.3), () -> m_AgitatorSubsystem.setAgitator(0), m_AgitatorSubsystem));
         //Manual Turret Controls
         //Hood Angle
         operator_joystick.povUp().whileTrue(Commands.startEnd(() -> m_ShooterSubsystem.setHood(.05), () -> m_ShooterSubsystem.setHood(0), m_ShooterSubsystem));
@@ -179,22 +189,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         System.out.println("AUTO RUNNING: " + autoChooser.getSelected().getName());
         return autoChooser.getSelected();
-        // Simple drive forward auton
-        /*
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        ); */
     }
 }

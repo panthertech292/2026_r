@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -33,8 +32,6 @@ public class ShooterFullAuto extends Command {
   private double feedSpeed;
   private double distance;
   private double targetRPM;
-  private double turretAngle;
-  private final Translation2d offset;
   /** Creates a new ShooterFeed. */
   public ShooterFullAuto(ShooterSubsystem Shooter_Subsystem, FeederSubsystem Feeder_Subsystem, AgitatorSubsystem Agitator_Subsystem, Supplier<Pose2d> robot, Translation2d targetARG, double feedSpeed) {
     ShooterSub = Shooter_Subsystem;
@@ -46,7 +43,6 @@ public class ShooterFullAuto extends Command {
     this.distance = 0;
     this.feedSpeed = feedSpeed;
     targetRPM = 0;
-    offset = new Translation2d(-0.1778, 0);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ShooterSub, FeederSub, AgitatorSub);
   }
@@ -100,6 +96,7 @@ public class ShooterFullAuto extends Command {
       FeederSub.setFeeder(0);
       AgitatorSub.setAgitator(0);
     }
+    SmartDashboard.putNumber("Shoot Distance", distance);
   }
 
   // Called once the command ends or is interrupted.
